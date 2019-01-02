@@ -3,6 +3,7 @@ package com.bignerdranch.android.geoquiz;
 import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +12,8 @@ import com.bignerdranch.android.geoquiz.model.Question;
 // initial commit
 
 public class QuizActivity extends AppCompatActivity {
+    private static final String TAG = "QuizActivity";
+
     private TextView mQuestionTextView;
 
     private Button mTrueButton;
@@ -33,6 +36,7 @@ public class QuizActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = findViewById(R.id.textView);
