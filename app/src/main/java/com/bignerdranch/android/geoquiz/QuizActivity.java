@@ -58,7 +58,6 @@ public class QuizActivity extends AppCompatActivity {
             mTrueButton.setEnabled(false);
         });
 
-
         mNextButton = findViewById(R.id.next_button);
         mNextButton.setOnClickListener(v -> {
             mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
