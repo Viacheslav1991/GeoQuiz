@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.bignerdranch.android.geoquiz.model.Question;
 
+// last commit chapter 4
+
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String INDEX_KEY = "index";
