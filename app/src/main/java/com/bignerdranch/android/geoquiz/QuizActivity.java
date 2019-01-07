@@ -1,7 +1,6 @@
 package com.bignerdranch.android.geoquiz;
 
 import android.annotation.SuppressLint;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,6 +44,7 @@ public class QuizActivity extends AppCompatActivity {
         mQuestionTextView = findViewById(R.id.textView);
 
         mTrueButton = findViewById(R.id.true_button);
+
         mTrueButton.setOnClickListener(v -> {
             checkAnswer(true);
             mFalseButton.setEnabled(false);
