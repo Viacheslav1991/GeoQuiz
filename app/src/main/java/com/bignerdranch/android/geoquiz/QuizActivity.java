@@ -16,17 +16,23 @@ import com.bignerdranch.android.geoquiz.model.Question;
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String INDEX_KEY = "index";
+    private static final String REMNANT_CHEATS_KEY = "remnant cheats";
     private static final String ANSWER_SHOWN_KEY = "answer shown";
     private static final int REQUEST_CODE_CHEAT = 0;
+
     private boolean mIsCheater;
+    private int mCurrentIndex = 0;
+    private int mRemnantCheats;
 
 
     private TextView mQuestionTextView;
+    private TextView mRemnantCheatTextView;
 
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
     private Button mCheatButton;
+
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -36,7 +42,6 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_americas, true),
             new Question(R.string.question_asia, true),
     };
-    private int mCurrentIndex = 0;
 
 
     @SuppressLint("ShowToast")
@@ -45,12 +50,18 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
+        mRemnantCheats = 3;
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(INDEX_KEY, 0);
             mIsCheater = savedInstanceState.getBoolean(ANSWER_SHOWN_KEY, false);
+            mRemnantCheats = savedInstanceState.getInt(REMNANT_CHEATS_KEY, 3);
         }
 
+
         mQuestionTextView = findViewById(R.id.textView);
+
+        mRemnantCheatTextView = findViewById(R.id.cheat_remain_text_view);
+        mRemnantCheatTextView.setText(String.valueOf(mRemnantCheats));
 
         mTrueButton = findViewById(R.id.true_button);
 
@@ -74,11 +85,14 @@ public class QuizActivity extends AppCompatActivity {
             updateQuestion();
         });
 
-        (mCheatButton = findViewById(R.id.cheat_button)).setOnClickListener(v ->
-                startActivityForResult(
-                        CheatActivity.newIntent(QuizActivity.this, mQuestionBank[mCurrentIndex].isAnswerTrue()),
-                        REQUEST_CODE_CHEAT));
-
+        mCheatButton = findViewById(R.id.cheat_button);
+        if (mRemnantCheats == 0) {
+            mCheatButton.setEnabled(false);
+        }
+        mCheatButton.setOnClickListener(v ->
+                    startActivityForResult(
+                            CheatActivity.newIntent(QuizActivity.this, mQuestionBank[mCurrentIndex].isAnswerTrue()),
+                            REQUEST_CODE_CHEAT));
 
         updateQuestion();
 
@@ -91,7 +105,7 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG, "onSaveInstanceState");
         outState.putInt(INDEX_KEY, mCurrentIndex);
         outState.putBoolean(ANSWER_SHOWN_KEY, mIsCheater);
-
+        outState.putInt(REMNANT_CHEATS_KEY, mRemnantCheats);
     }
 
     @Override
@@ -104,6 +118,13 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            if (mIsCheater) {
+                mRemnantCheats--;
+                mRemnantCheatTextView.setText(String.valueOf(mRemnantCheats));
+                if (mRemnantCheats == 0) {
+                    mCheatButton.setEnabled(false);
+                }
+            }
         }
     }
 
@@ -115,8 +136,9 @@ public class QuizActivity extends AppCompatActivity {
 
     private void checkAnswer(boolean userPressedTrue) {
         boolean rightAnswer = mQuestionBank[mCurrentIndex].isAnswerTrue();
-        if (mIsCheater)
+        if (mIsCheater) {
             Toast.makeText(this, R.string.judgment_toast, Toast.LENGTH_SHORT).show();
+        }
         else {
             if (userPressedTrue == rightAnswer) {
                 Toast.makeText(this, R.string.correct_toast, Toast.LENGTH_SHORT).show();
